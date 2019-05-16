@@ -7,24 +7,15 @@
 				<button class="delete" aria-label="close" @click="closeModal(false)"></button>
 			</header>
 			<section class="modal-card-body">
-				<div v-if="!isCheckoutSection">
-					<div class="box" v-for="product in products" :key="product.id">
-						<button class="is-pulled-right button is-info is-inverted" @click="removeFromCart(product.id)">{{ removeLabel }}</button>
-						<p>{{ product.title }}  {{ product.quantity > 0 ?  ` - Quantity: ${product.quantity}` : ''}}</p>
-						<p>{{ product.price }} &euro;</p>
-					</div>
-					<div v-if="products.length === 0">
-						<p>{{ cartEmptyLabel }}</p>
-					</div>
-				</div>
-				<div v-if="isCheckoutSection">
-					<p>Gracias por su compra.</p>
-				</div>
+		
+				<v-flex xs12 sm6 d-flex>
+				<v-select :items="items" label="Hora de inicio"></v-select>
+				</v-flex>
+				<v-flex xs12 sm6 d-flex>
+				<v-select :items="items" label="Hora de inicio"></v-select>
+				</v-flex>
+      			</v-layout> 
 			</section>
-			<footer class="modal-card-foot">
-				<button v-show="products.length > 0 && !isCheckoutSection" class="button is-success" @click="onNextBtn">{{ buyLabel }}</button>
-				<button v-if="isCheckoutSection" class="button is-success" @click="closeModal(true)">{{ closeLabel }}</button>
-			</footer>
 		</div>
 	</div>
 </template>
@@ -36,17 +27,16 @@ export default {
 	data () {
 		return {
 			modalTitle: 'Carrito de reservas',
-			removeLabel: 'Eliminar reserva',
-			cartEmptyLabel: 'No hay nada en el carrito',
-			closeLabel: 'Cerrar',
-			isCheckoutSection: false
+			items:['00:00', '00:30', '01:00', '01:30','02:00','02:30','03:00','03:30','04:00',
+			'04:30','05:00','05:30','06:00','06:30','07:00','07:30','08:00','08:30','09:00','09:30',
+			'10:00','10:30','11:00', '11:30','12:00','12:30','13:00','13:30','14:00',
+			'14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30',
+			'20:00','20:30','21:00','21:30','22:00','22:30','23:00','23:30','24:00']
+
 		}
 	},
 
 	computed: {
-			products () {
-				return this.$store.getters.productsAdded;
-			},
 			openModal () {
 				if (this.$store.getters.isReserve) {
 					return true;
@@ -54,32 +44,6 @@ export default {
 					return false;
 				}
 			},
-			buyLabel () {
-				let totalProducts = this.products.length,
-						productsAdded = this.$store.getters.productsAdded,
-						pricesArray = [],
-						productLabel = '',
-						finalPrice = '',
-						quantity = 1;
-
-				productsAdded.forEach(product => {
-
-					if (product.quantity >= 1) {
-						quantity = product.quantity;
-					}
-
-					pricesArray.push((product.price * quantity)); // get the price of every product added and multiply quantity
-				});
-
-				finalPrice = pricesArray.reduce((a, b) => a + b, 0); // sum the prices
-				
-				if (totalProducts > 1) { // set plural or singular
-					productLabel = 'products';
-				} else {
-					productLabel = 'product';
-				}
-				return `Buy ${totalProducts} ${productLabel} at ${finalPrice}€`;
-		},
 		isUserLoggedIn () {
 			return this.$store.getters.isUserLoggedIn;
 		}
@@ -92,14 +56,6 @@ export default {
 			if (reloadPage) {
 				window.location.reload();
 			}
-		},
-		removeFromCart (id) {
-			let data = {
-					id: id,
-					status: false
-			}
-			this.$store.commit('removeFromCart', id);
-			this.$store.commit('setAddedBtn', data);
 		},
 		onNextBtn () {
 			if (this.isUserLoggedIn) {
