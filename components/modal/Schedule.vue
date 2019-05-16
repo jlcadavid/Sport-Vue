@@ -7,14 +7,37 @@
 				<button class="delete" aria-label="close" @click="closeModal(false)"></button>
 			</header>
 			<section class="modal-card-body">
-		
-				<v-flex xs12 sm6 d-flex>
-				<v-select :items="items" label="Hora de inicio"></v-select>
-				</v-flex>
-				<v-flex xs12 sm6 d-flex>
-				<v-select :items="items" label="Hora de inicio"></v-select>
-				</v-flex>
-      			</v-layout> 
+	<v-layout>
+    <v-flex>
+      <v-sheet height="400">
+        <v-calendar
+          color="primary"
+          type="day"
+		  v-model="todayDate"
+		  :now="todaydate"
+		   @click:date="izi"
+		   v-if="daycalendar"
+        >
+          <template v-slot:dayHeader="{ present }">
+            <template
+              v-if="present"
+              class="text-xs-center"
+            >
+              Today
+            </template>
+          </template>
+
+          <template v-slot:interval="{ hour }">
+            <div
+              class="text-xs-center"
+            >
+              Desocupado
+            </div>
+          </template>
+        </v-calendar>
+      </v-sheet>
+    </v-flex>
+  </v-layout>
 			</section>
 		</div>
 	</div>
@@ -27,11 +50,14 @@ export default {
 	data () {
 		return {
 			modalTitle: 'Carrito de reservas',
+			daycalendar: true,
+			todayDate: new Date().toISOString().substr(0, 10),
 			items:['00:00', '00:30', '01:00', '01:30','02:00','02:30','03:00','03:30','04:00',
 			'04:30','05:00','05:30','06:00','06:30','07:00','07:30','08:00','08:30','09:00','09:30',
 			'10:00','10:30','11:00', '11:30','12:00','12:30','13:00','13:30','14:00',
 			'14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30',
-			'20:00','20:30','21:00','21:30','22:00','22:30','23:00','23:30','24:00']
+			'20:00','20:30','21:00','21:30','22:00','22:30','23:00','23:30','24:00'],
+			present:3
 
 		}
 	},
@@ -67,6 +93,9 @@ export default {
 		},
 		onPrevBtn () {
 			this.isCheckoutSection = false;
+		},
+		izi(){
+			this.daycalendar=false;
 		}
 	}
 }
